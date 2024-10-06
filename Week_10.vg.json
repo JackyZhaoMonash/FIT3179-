@@ -1,0 +1,110 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 600,
+  "height": 337.5,
+  "params": [
+    {
+      "name": "Year_selection",
+      "value": 1981,
+      "bind": {
+        "input": "range",
+        "min": 1981,
+        "max": 2021,
+        "step": 1,
+        "name": "Select Year"
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/ne_50m_admin_1_states_provinces.json",
+        "format": {
+          "type": "topojson",
+          "feature": "ne_50m_admin_1_states_provinces"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "white",
+        "stroke": "black"
+      },
+      "projection": {
+        "type": "mercator"
+      }
+    },
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv",
+        "format": { "type": "csv" }
+      },
+      "transform": [
+        {
+          "filter": "toNumber(datum.Year) === Year_selection"
+        },
+        {
+          "aggregate": [
+            {
+              "op": "count",
+              "as": "num_of_accidents"
+            }
+          ],
+          "groupby": ["State"]
+        },
+        {
+          "calculate": "'AU-' + upper(datum.State)",
+          "as": "modify_state_key"
+        },
+        {
+          "lookup": "modify_state_key",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/ne_50m_admin_1_states_provinces.json",
+              "format": {
+                "type": "topojson",
+                "feature": "ne_50m_admin_1_states_provinces"
+              }
+            },
+            "key": "properties.iso_3166_2",
+            "fields": ["properties.latitude", "properties.longitude"]
+          },
+          "as": ["latitude", "longitude"]
+        },
+        {
+          "bin": {
+            "maxbins": 7 
+          },
+          "field": "num_of_accidents",
+          "as": "accident_bins" 
+        }
+      ],
+      "mark": "circle",
+      "encoding": {
+        "latitude": { "field": "latitude", "type": "quantitative" },
+        "longitude": { "field": "longitude", "type": "quantitative" },
+        "size": {
+          "field": "num_of_accidents",
+          "type": "quantitative",
+          "scale": {
+            "domain": [115,230,345,460,575,690,780],
+            "range": [200,400,600,800,1000,1200,1400]
+          }
+        },
+        "color": {
+          "field": "num_of_accidents",
+          "type": "quantitative",
+          "scale": {
+            "domain": [115,230,345,460,575,690,780],
+            "range": ["#FFFF00", "#D3D300", "#AFAF00", "#828200", "#5C5C8A", "#3F3F61","#3E1A78"]
+          }
+        },
+        "tooltip": [
+          { "field": "State", "type": "nominal" },
+          { "field": "num_of_accidents", "type": "quantitative" },
+          { "field": "latitude", "type": "quantitative" },
+          { "field": "longitude", "type": "quantitative" }
+        ]
+      }
+    }
+  ]
+}
