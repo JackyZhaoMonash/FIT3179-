@@ -5,10 +5,10 @@
   "params": [
     {
       "name": "Year_selection",
-      "value": 1981,
+      "value": 1989,
       "bind": {
         "input": "range",
-        "min": 1981,
+        "min": 1989,
         "max": 2021,
         "step": 1,
         "name": "Select Year"
@@ -26,7 +26,7 @@
       },
       "mark": {
         "type": "geoshape",
-        "fill": "white",
+        "fill": "blue",
         "stroke": "black"
       },
       "projection": {
@@ -69,13 +69,6 @@
             "fields": ["properties.latitude", "properties.longitude"]
           },
           "as": ["latitude", "longitude"]
-        },
-        {
-          "bin": {
-            "maxbins": 7 
-          },
-          "field": "num_of_accidents",
-          "as": "accident_bins" 
         }
       ],
       "mark": "circle",
@@ -95,7 +88,7 @@
           "type": "quantitative",
           "scale": {
             "domain": [115,230,345,460,575,690,780],
-            "range": ["#FFFF00", "#D3D300", "#AFAF00", "#828200", "#5C5C8A", "#3F3F61","#3E1A78"]
+            "range": ["#f0f0f0","#d9d9d9","#bdbdbd","#969696","#737373","#525252","#252525"]
           }
         },
         "tooltip": [

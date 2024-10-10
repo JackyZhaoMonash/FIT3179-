@@ -1,0 +1,77 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 337.5,
+    "data": {
+        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
+    },
+    "params": [
+        {
+            "name": "Year_selection",
+            "value": 1989,
+            "bind": {
+                "input": "range",
+                "min": 1989,
+                "max": 2021,
+                "step": 1,
+                "name": "Select Year"
+            }
+        }
+    ],
+    "transform": [
+        {
+            "calculate": "datetime(datum.Year,'02','01',split(datum.Time,':')[0],split(datum.Time,':')[1])",
+            "as": "format_time"
+        },
+        {
+            "aggregate": [
+                {
+                    "op": "count",
+                    "as": "num_of_accidents"
+                }
+            ],
+            "groupby": [
+                "format_time",
+                "Month",
+                "Gender"
+            ]
+        },
+        {
+            "filter": "datum.Gender !== 'Unspecified'"
+        },
+        {
+            "filter":"year(datum.format_time) === Year_selection"
+        }
+    ],
+    "mark": "bar",
+    "encoding": {
+        "x": {
+            "field": "format_time",
+            "type": "temporal",
+            "axis":{"format":"%H:%M"}
+        },
+        "y": {
+            "field": "num_of_accidents",
+            "type": "quantitative"
+        },
+        "color": {
+            "field": "Gender",
+            "type": "nominal"
+        },
+        "tooltip": [
+            {
+                "field": "num_of_accidents",
+                "type": "quantitative"
+            },
+            {
+                "field":"Gender",
+                "type": "nominal"
+            },
+            {
+                "field": "format_time",
+                "type": "temporal",
+                "format": "%Y-%m-%d %H:%M"
+            }
+        ]
+    }
+}

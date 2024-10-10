@@ -8,10 +8,10 @@
   "params": [
     {
       "name": "Year_selection",
-      "value": 1981,
+      "value": 1989,
       "bind": {
         "input": "range",
-        "min": 1981,
+        "min": 1989,
         "max": 2021,
         "step": 1,
         "name": "Select Year"
@@ -42,7 +42,7 @@
       ]
     }
   ],
-  "mark": "line",
+  "mark": "area",
   "encoding": {
     "x": {
       "field": "Speed_Limit",
@@ -50,12 +50,10 @@
     },
     "y": {
       "field": "number_of_accident",
-      "type": "quantitative"
+      "type": "quantitative",
+      "stack":true
     },
-    "color": {
-      "field": "['Age.Group']",
-      "type": "nominal"
-    },
+    "color":{"field":"['Age.Group']","type": "nominal"},
     "tooltip": [
       {
         "field": "Speed_Limit",
