@@ -1,0 +1,425 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
+    },
+    "params": [
+        {
+            "name": "Year_selection",
+            "value": 1989,
+            "bind": {
+                "input": "range",
+                "min": 1989,
+                "max": 2021,
+                "step": 1,
+                "name": "Select Year"
+            }
+        }
+    ],
+    "hconcat": [
+        {
+            "width": "container",
+            "height": 400,
+            "title": "Number of accident happened in Each state Australia",
+            "layer": [
+                {
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/ne_50m_admin_1_states_provinces.json",
+                        "format": {
+                            "type": "topojson",
+                            "feature": "ne_50m_admin_1_states_provinces"
+                        }
+                    },
+                    "mark": {
+                        "type": "geoshape",
+                        "fill": "blue",
+                        "stroke": "black"
+                    },
+                    "projection": {
+                        "type": "mercator"
+                    }
+                },
+                {
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv",
+                        "format": {
+                            "type": "csv"
+                        }
+                    },
+                    "transform": [
+                        {
+                            "filter": "toNumber(datum.Year) === Year_selection"
+                        },
+                        {
+                            "aggregate": [
+                                {
+                                    "op": "count",
+                                    "as": "num_of_accidents"
+                                }
+                            ],
+                            "groupby": [
+                                "State"
+                            ]
+                        },
+                        {
+                            "calculate": "'AU-' + upper(datum.State)",
+                            "as": "modify_state_key"
+                        },
+                        {
+                            "lookup": "modify_state_key",
+                            "from": {
+                                "data": {
+                                    "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/ne_50m_admin_1_states_provinces.json",
+                                    "format": {
+                                        "type": "topojson",
+                                        "feature": "ne_50m_admin_1_states_provinces"
+                                    }
+                                },
+                                "key": "properties.iso_3166_2",
+                                "fields": [
+                                    "properties.latitude",
+                                    "properties.longitude"
+                                ]
+                            },
+                            "as": [
+                                "latitude",
+                                "longitude"
+                            ]
+                        }
+                    ],
+                    "mark": "circle",
+                    "encoding": {
+                        "latitude": {
+                            "field": "latitude",
+                            "type": "quantitative"
+                        },
+                        "longitude": {
+                            "field": "longitude",
+                            "type": "quantitative"
+                        },
+                        "size": {
+                            "field": "num_of_accidents",
+                            "type": "quantitative",
+                            "scale": {
+                                "domain": [
+                                    115,
+                                    230,
+                                    345,
+                                    460,
+                                    575,
+                                    690,
+                                    780
+                                ],
+                                "range": [
+                                    200,
+                                    400,
+                                    600,
+                                    800,
+                                    1000,
+                                    1200,
+                                    1400
+                                ]
+                            },
+                            "legend":{
+                                "orient": "left"
+                            }
+                        },
+                        "color": {
+                            "field": "num_of_accidents",
+                            "type": "quantitative",
+                            "scale": {
+                                "domain": [
+                                    115,
+                                    230,
+                                    345,
+                                    460,
+                                    575,
+                                    690,
+                                    780
+                                ],
+                                "range": [
+                                    "#f0f0f0",
+                                    "#d9d9d9",
+                                    "#bdbdbd",
+                                    "#969696",
+                                    "#737373",
+                                    "#525252",
+                                    "#252525"
+                                ]
+                            }
+                        },
+                        "tooltip": [
+                            {
+                                "field": "State",
+                                "type": "nominal"
+                            },
+                            {
+                                "field": "num_of_accidents",
+                                "type": "quantitative"
+                            },
+                            {
+                                "field": "latitude",
+                                "type": "quantitative"
+                            },
+                            {
+                                "field": "longitude",
+                                "type": "quantitative"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "width":60,
+            "height":400,
+            "title": "Total number",
+            "mark":"bar",
+            "transform": [
+                {
+                    "filter":"toNumber(datum.Year) === Year_selection"
+                },
+                {
+                    "aggregate": [
+                        {
+                            "op": "count",
+                            "as": "num_of_accidents"
+                        }
+                    ],
+                    "groupby": ["Year","['Age.Group']"]
+                }
+            ],
+            "encoding": {
+                "x":{"field":"Year","type": "ordinal"},
+                "y":{"field":"num_of_accidents","type": "quantitative"},
+                "color":{"field":"['Age.Group']","type": "nominal"}
+            }
+        },
+        {
+            "vconcat": [
+                {
+                    "width": 200,
+                    "height": 150,
+                    "transform": [
+                        {
+                            "filter": "toNumber(datum.Year) === Year_selection"
+                        },
+                        {
+                            "calculate": "toNumber(datum['Speed.Limit'])",
+                            "as": "Speed_Limit"
+                        },
+                        {
+                            "filter": "datum['Speed.Limit'] > 0"
+                        },
+                        {
+                            "aggregate": [
+                                {
+                                    "op": "count",
+                                    "as": "number_of_accident"
+                                }
+                            ],
+                            "groupby": [
+                                "Speed_Limit",
+                                "['Age.Group']"
+                            ]
+                        }
+                    ],
+                    "mark": "area",
+                    "encoding": {
+                        "x": {
+                            "field": "Speed_Limit",
+                            "type": "quantitative"
+                        },
+                        "y": {
+                            "field": "number_of_accident",
+                            "type": "quantitative",
+                            "stack": true
+                        },
+                        "color": {
+                            "field": "['Age.Group']",
+                            "type": "nominal"
+                        },
+                        "tooltip": [
+                            {
+                                "field": "Speed_Limit",
+                                "type": "quantitative"
+                            },
+                            {
+                                "field": "['Age.Group']",
+                                "type": "nominal"
+                            },
+                            {
+                                "field": "number_of_accident",
+                                "type": "quantitative"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "facet": {
+                        "field": "Dayweek",
+                        "type": "nominal"
+                    },
+                    "columns": 3,
+                    "spec": {
+                        "width":100,
+                        "height":50,
+                        "data":{
+                            "url":"https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
+                        },
+                        "transform": [
+                            {
+                                "filter":"toNumber(datum.Year) === Year_selection"
+                            },
+                            {
+                                "aggregate": [
+                                    {
+                                        "op": "count",
+                                        "as": "num_of_accidents"
+                                    }
+                                ],
+                                "groupby": [
+                                    "['Age.Group']",
+                                    "Year"
+                                ]
+                            }
+                        ],
+                        "mark": "arc",
+                        "encoding": {
+                            "theta": {
+                                "field": "num_of_accidents",
+                                "type": "quantitative"
+                            },
+                            "color": {
+                                "field": "['Age.Group']",
+                                "type": "nominal"
+                            },
+                            "tooltip": [
+                                {
+                                    "field": "num_of_accidents",
+                                    "type": "quantitative"
+                                },
+                                {
+                                    "field": "['Age.Group']",
+                                    "type": "nominal"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "vconcat": [
+                {
+                    "width": "container",
+                    "height": 150,
+                    "transform": [
+                        {
+                            "filter": "toNumber(datum.Year) === Year_selection"
+                        },
+                        {
+                            "aggregate": [
+                                {
+                                    "op": "count",
+                                    "as": "num_of_accidents"
+                                }
+                            ],
+                            "groupby": [
+                                "Year",
+                                "['Age.Group']",
+                                "['Road.User']"
+                            ]
+                        }
+                    ],
+                    "mark": "rect",
+                    "encoding": {
+                        "x": {
+                            "field": "['Age.Group']",
+                            "type": "nominal"
+                        },
+                        "y": {
+                            "field": "['Road.User']",
+                            "type": "nominal"
+                        },
+                        "color": {
+                            "field": "num_of_accidents",
+                            "type": "quantitative",
+                            "scale": {
+                                "scheme": "greys"
+                            }
+                        },
+                        "tooltip": [
+                            {
+                                "field": "num_of_accidents",
+                                "type": "quantitative"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "width": "container",
+                    "height": 100,
+                    "transform": [
+                        {
+                            "calculate": "datetime(datum.Year,'02','01',split(datum.Time,':')[0],split(datum.Time,':')[1])",
+                            "as": "format_time"
+                        },
+                        {
+                            "aggregate": [
+                                {
+                                    "op": "count",
+                                    "as": "num_of_accidents"
+                                }
+                            ],
+                            "groupby": [
+                                "format_time",
+                                "Month",
+                                "Gender"
+                            ]
+                        },
+                        {
+                            "filter": "datum.Gender !== 'Unspecified'"
+                        },
+                        {
+                            "filter": "year(datum.format_time) === Year_selection"
+                        }
+                    ],
+                    "mark": "bar",
+                    "encoding": {
+                        "x": {
+                            "field": "format_time",
+                            "type": "temporal",
+                            "axis": {
+                                "format": "%H:%M"
+                            }
+                        },
+                        "y": {
+                            "field": "num_of_accidents",
+                            "type": "quantitative"
+                        },
+                        "color": {
+                            "field": "Gender",
+                            "type": "nominal"
+                        },
+                        "tooltip": [
+                            {
+                                "field": "num_of_accidents",
+                                "type": "quantitative"
+                            },
+                            {
+                                "field": "Gender",
+                                "type": "nominal"
+                            },
+                            {
+                                "field": "format_time",
+                                "type": "temporal",
+                                "format": "%Y-%m-%d %H:%M"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -43,7 +43,7 @@
             "filter":"year(datum.format_time) === Year_selection"
         }
     ],
-    "mark": "bar",
+    "mark": "line",
     "encoding": {
         "x": {
             "field": "format_time",
@@ -55,7 +55,7 @@
             "type": "quantitative"
         },
         "color": {
-            "field": "Gender",
+            "field":"Gender",
             "type": "nominal"
         },
         "tooltip": [
