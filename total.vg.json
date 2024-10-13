@@ -3,6 +3,9 @@
     "data": {
         "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
     },
+    "config": {
+        "font": "Arial"
+    },
     "params": [
         {
             "name": "Year_selection",
@@ -20,7 +23,7 @@
         {
             "width": "container",
             "height": 400,
-            "title": "Number of accident happened in Each state Australia",
+            "title": {"text":"Number of accident happened in Each state Australia","fontSize":20},
             "layer": [
                 {
                     "data": {
@@ -120,9 +123,10 @@
                                     1400
                                 ]
                             },
-                            "legend":{
+                            "legend": {
                                 "orient": "left"
-                            }
+                            },
+                            "title":"Number of Accidents"
                         },
                         "color": {
                             "field": "num_of_accidents",
@@ -146,7 +150,8 @@
                                     "#525252",
                                     "#252525"
                                 ]
-                            }
+                            },
+                            "title":"Number of Accidents"
                         },
                         "tooltip": [
                             {
@@ -171,13 +176,13 @@
             ]
         },
         {
-            "width":60,
-            "height":400,
-            "title": "Total number",
-            "mark":"bar",
+            "width": 60,
+            "height": 400,
+            "title": {"text":"Total number of Fatal Accident", "fontSize":20},
+            "mark": "bar",
             "transform": [
                 {
-                    "filter":"toNumber(datum.Year) === Year_selection"
+                    "filter": "toNumber(datum.Year) === Year_selection"
                 },
                 {
                     "aggregate": [
@@ -186,20 +191,50 @@
                             "as": "num_of_accidents"
                         }
                     ],
-                    "groupby": ["Year","['Age.Group']"]
+                    "groupby": [
+                        "Year",
+                        "['Age.Group']"
+                    ]
                 }
             ],
             "encoding": {
-                "x":{"field":"Year","type": "ordinal"},
-                "y":{"field":"num_of_accidents","type": "quantitative"},
-                "color":{"field":"['Age.Group']","type": "nominal"}
+                "x": {
+                    "field": "Year",
+                    "type": "ordinal"
+                },
+                "y": {
+                    "field": "num_of_accidents",
+                    "type": "quantitative",
+                    "scale": {
+                        "domain": [
+                            0,
+                            1600
+                        ]
+                    }
+                },
+                "color": {
+                    "field": "['Age.Group']",
+                    "type": "nominal",
+                    "title":"Number of Accidents"
+                },
+                "tooltip":[
+                    {
+                        "field":"num_of_accidents",
+                        "type": "quantitative"
+                    },
+                    {
+                        "field":"['Age.Group']",
+                        "type": "nominal"
+                    }
+                ]
             }
         },
         {
             "vconcat": [
                 {
-                    "width": 200,
-                    "height": 150,
+                    "width": 300,
+                    "height": 250,
+                    "title":{"text":"Number of Accident vs Speed Limit of the Accident location","fontSize":20},
                     "transform": [
                         {
                             "filter": "toNumber(datum.Year) === Year_selection"
@@ -237,7 +272,8 @@
                         },
                         "color": {
                             "field": "['Age.Group']",
-                            "type": "nominal"
+                            "type": "nominal",
+                            "title":"Number of Accidents"
                         },
                         "tooltip": [
                             {
@@ -256,20 +292,21 @@
                     }
                 },
                 {
+                    "title":{"text":"Age Group make up at different day of the week","fontSize":20},
                     "facet": {
                         "field": "Dayweek",
                         "type": "nominal"
                     },
                     "columns": 3,
                     "spec": {
-                        "width":100,
-                        "height":50,
-                        "data":{
-                            "url":"https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
+                        "width": 100,
+                        "height": 50,
+                        "data": {
+                            "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
                         },
                         "transform": [
                             {
-                                "filter":"toNumber(datum.Year) === Year_selection"
+                                "filter": "toNumber(datum.Year) === Year_selection"
                             },
                             {
                                 "aggregate": [
@@ -292,7 +329,8 @@
                             },
                             "color": {
                                 "field": "['Age.Group']",
-                                "type": "nominal"
+                                "type": "nominal",
+                                "title":"Number of Accidents"
                             },
                             "tooltip": [
                                 {
@@ -314,6 +352,7 @@
                 {
                     "width": "container",
                     "height": 150,
+                    "title":{"text":"Age Group Vs Their travel Method in their Accident","fontSize":20},
                     "transform": [
                         {
                             "filter": "toNumber(datum.Year) === Year_selection"
@@ -334,20 +373,23 @@
                     ],
                     "mark": "rect",
                     "encoding": {
-                        "x": {
-                            "field": "['Age.Group']",
-                            "type": "nominal"
-                        },
                         "y": {
+                            "field": "['Age.Group']",
+                            "type": "nominal",
+                            "title":"Age Group"
+                        },
+                        "x": {
                             "field": "['Road.User']",
-                            "type": "nominal"
+                            "type": "nominal",
+                            "title":"Road User"
                         },
                         "color": {
                             "field": "num_of_accidents",
                             "type": "quantitative",
                             "scale": {
                                 "scheme": "greys"
-                            }
+                            },
+                            "title":"Number of Accidents"
                         },
                         "tooltip": [
                             {
@@ -358,8 +400,9 @@
                     }
                 },
                 {
-                    "width": "container",
-                    "height": 100,
+                    "width": 400,
+                    "height": 150,
+                    "title":{"text":"Accident distrubtion over time period ","fontSize":20},
                     "transform": [
                         {
                             "calculate": "datetime(datum.Year,'02','01',split(datum.Time,':')[0],split(datum.Time,':')[1])",
@@ -392,7 +435,8 @@
                             "type": "temporal",
                             "axis": {
                                 "format": "%H:%M"
-                            }
+                            },
+                            "title":"time"
                         },
                         "y": {
                             "field": "num_of_accidents",
@@ -400,7 +444,13 @@
                         },
                         "color": {
                             "field": "Gender",
-                            "type": "nominal"
+                            "type": "nominal",
+                            "scale": {
+                                "range": [
+                                    "grey",
+                                    "purple"
+                                ]
+                            }
                         },
                         "tooltip": [
                             {

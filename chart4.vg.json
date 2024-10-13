@@ -1,7 +1,5 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": 600,
-    "height": 337.5,
     "data": {
         "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
     },
