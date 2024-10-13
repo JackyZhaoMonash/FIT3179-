@@ -1,12 +1,10 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": 600,
-    "height": 337.5,
     "data": {
         "url": "https://raw.githubusercontent.com/JackyZhaoMonash/FIT3179-/refs/heads/main/cleaned_Crash_Data.csv"
     },
     "facet": {
-        "field":"['Age.Group']",
+        "field":"Dayweek",
         "type": "nominal"
     },
     "columns": 3,
@@ -20,7 +18,7 @@
                     }
                 ],
                 "groupby": [
-                    "Dayweek"
+                    "['Age.Group']"
                 ]
             }
         ],
@@ -31,11 +29,8 @@
                 "type": "quantitative"
             },
             "color": {
-                "field": "Dayweek",
-                "type": "nominal",
-                "scale": {
-                    "scheme": "greys"
-                }
+                "field": "['Age.Group']",
+                "type": "nominal"
             },
             "tooltip": [
                 {
@@ -43,7 +38,7 @@
                     "type": "quantitative"
                 },
                 {
-                    "field": "Dayweek",
+                    "field": "['Age.Group']",
                     "type": "nominal"
                 }
             ]
